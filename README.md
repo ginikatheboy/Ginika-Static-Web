@@ -38,6 +38,7 @@ This project demonstrates:
 │       └── deploy.yml # CI/CD pipeline
 ├── index.html # Static website
 └── README.md # Documentation
+```
 
 
 ---
