@@ -1,57 +1,67 @@
-Ginika — Static Website
+# 🌐 Ginika — Static Website Deployment (AWS S3 + GitHub Actions)
 
-Static site deployed to AWS S3 with CI/CD (GitHub Actions)
+A simple static website deployed automatically to **AWS S3** using **CI/CD with GitHub Actions**.
 
-Live demo: (http://ginika-website.s3-website-us-east-1.amazonaws.com/)
-Repo: https://github.com/ginikatheboy/Ginika-Static-Web
+🔗 **Live Demo:** http://ginika-website.s3-website-us-east-1.amazonaws.com/  
+📦 **Repository:** https://github.com/ginikatheboy/Ginika-Static-Web  
 
-⸻
+---
 
-Project summary
+## 📌 Project Summary
 
-This repository hosts a simple static website and an automated pipeline that deploys the site to an AWS S3 bucket. The site is automatically synced on every push to main using GitHub Actions.
+This repository contains a **single-page static website** and a **CI/CD pipeline** that deploys updates to an S3 bucket every time you push to `main`.
 
-What this demonstrates
- • Hosting a static site on S3 with static website hosting
- • Secure automated deployment using GitHub Actions and IAM credentials
- • Basic infra hygiene: minimal IAM permissions, secrets management, and CI debug helpers
+This project demonstrates:
 
-⸻
+- 🚀 Hosting a static site on **Amazon S3**
+- 🔁 Automatic deployments using **GitHub Actions**
+- 🔐 Secure CI/CD using IAM and GitHub Secrets
+- 🧹 Clean, minimal IAM policy & proper infra hygiene
 
-Features
- • Single-page static website (index.html)
- • GitHub Actions workflow to s3 sync on push
- • Example .github/workflows/deploy.yml included and ready to use
- • Clear documentation for secrets / IAM setup and troubleshooting
+---
 
-⸻
+## ✨ Features
 
-Repo contents
+- Static website (`index.html`)
+- Automatic S3 deployment using GitHub Actions
+- Ready-to-use workflow (`deploy.yml`)
+- Clear instructions for IAM setup and troubleshooting
+
+---
+
+## 📁 Repository Structure
 
 .
 ├── .github/
-│   └── workflows/
-│       └── deploy.yml        # GitHub Actions workflow to sync to S3
-├── index.html                # Simple static site
-├── README.md                 # (this file)
+│ └── workflows/
+│ └── deploy.yml # CI/CD pipeline
+├── index.html # Static website
+└── README.md # Documentation
 
-⸻
 
-Quick start — (what you need)
- 1. An S3 bucket configured for website hosting (or simply as an origin for CloudFront).
- 2. A CloudFront distribution configured to use the S3 bucket as origin (recommended).
- 3. An IAM user with programmatic access and an access key + secret key. This user needs only the S3 permissions listed below.
- 4. GitHub repo secrets created:
- • AWS_ACCESS_KEY_ID
- • AWS_SECRET_ACCESS_KEY
- • S3_BUCKET (the bucket name, no s3://)
+---
 
-⸻
+## ⚡ Quick Start Requirements
 
-IAM policy (minimal)
+Before using this repo, ensure you have:
 
-Attach a policy like this to the IAM user that your GitHub Action uses. Replace your-bucket-name with your bucket name.
+- An **S3 bucket** (website hosting optional)
+- (Recommended) A **CloudFront distribution**
+- An **IAM user** for GitHub Actions with minimal S3 permissions
+- GitHub repo secrets:
 
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+S3_BUCKET
+
+
+---
+
+## 🔒 Minimal IAM Policy
+
+Replace `ginika-website` with your bucket name:
+
+```json
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -75,94 +85,114 @@ Attach a policy like this to the IAM user that your GitHub Action uses. Replace 
   ]
 }
 
-⸻
 
-GitHub Actions — How the workflow works
+🔧 GitHub Actions — How It Works
 
-The workflow (.github/workflows/deploy.yml) runs on pushes to main. High level steps:
- 1. Checkout the repo
- 2. Configure AWS credentials (from GitHub Secrets)
- 3. Run aws s3 sync to upload site files to the configured S3 bucket
- 4. (Optional) run a CloudFront invalidation
+The deployment workflow triggers on pushes to main:
 
-You can use the example workflow included in the repo. It is built to be robust and excludes internal repo files like .git and .github.
+Checkout repository
 
-⸻
+Configure AWS credentials
 
-How to configure and use (step-by-step)
+Run aws s3 sync to upload files
 
-1. Create S3 bucket
- • Create an S3 bucket (name must be globally unique).
- • If using CloudFront, the bucket can be private and serve via CloudFront OAI/OAC. For a simple demo you can enable public reads on objects (not recommended long term).
+(Optional) Invalidate CloudFront cache
 
-2. Upload the site manually (first time)
- • You can test manually to confirm everything works:
+This workflow ignores files like .git and .github to keep deployments clean.
 
-aws s3 sync . s3://your-bucket --exclude ".git/*" --exclude ".github/*"
+🛠️ Setup Guide (Step-by-Step)
+1️⃣ Create an S3 Bucket
 
- • Confirm index.html is reachable (via S3 website endpoint or CloudFront URL after distribution is ready).
+Name must be globally unique
 
-3. Create CloudFront distribution
- • Origin: your S3 bucket (or the S3 website endpoint)
- • Viewer Protocol Policy: Redirect HTTP to HTTPS / or HTTPS only
-4. Add GitHub repository secrets
- • Go to your GitHub repo > Settings > Secrets and set:
- • AWS_ACCESS_KEY_ID
- • AWS_SECRET_ACCESS_KEY
- • S3_BUCKET (bucket name)
+For public website hosting: enable static hosting & public object reads
 
-5. Push to main and watch the workflow
- • Commit changes (e.g., update index.html) and push to main.
- • Navigate to Actions → Deploy static site to S3 and watch the run.
- • If successful, the site files sync to S3 and (optionally) CloudFront is invalidated.
+For CloudFront: bucket can stay private
 
-⸻
 
-Example deploy.yml (what this repo uses)
+aws s3 sync . s3://your-bucket \
+  --exclude ".git/" \
+  --exclude ".github/"
 
-The repository contains an example workflow. It uses aws-actions/aws-cli@v2 for reliable aws execution and runs s3 sync excluding .git and .github.
+Then visit your S3 website endpoint or CloudFront URL to confirm.
 
-⸻
+3️⃣ Create CloudFront Distribution (Optional but recommended)
 
-Validation / Testing checklist
- • If using direct S3 website: visit http://<bucket-website-endpoint>/.
- • Confirm GitHub Action ran and s3 sync completed with no errors.
- • If content does not update immediately, invalidate CloudFront or wait for distribution TTL.
+Origin: your S3 bucket
 
-⸻
+Viewer Protocol Policy: Redirect HTTP to HTTPS
 
-Troubleshooting (common problems)
- • SignatureDoesNotMatch → check AWS_REGION and keys. Ensure Secrets are correct and the region matches the bucket.
- • Files uploaded include .git → adjust the --exclude arguments in the workflow.
- • Permission denied / AccessDenied → verify IAM policy includes s3:PutObject and s3:DeleteObject for the bucket objects.
+4️⃣ Add Repo Secrets
 
-⸻
+GitHub → Repository → Settings → Secrets → Actions:
 
-Security notes
- • Use least-privilege IAM credentials for CI/CD. The policy above is minimal for S3 sync.
- • Prefer bucket policies + CloudFront OAI/OAC to allow CloudFront-only access and block public object ACLs.
- • Store secrets in GitHub Secrets — never hard-code credentials in repo.
+AWS_ACCESS_KEY_ID
 
-⸻
+AWS_SECRET_ACCESS_KEY
 
-Author
+S3_BUCKET
+
+5️⃣ Push to Deploy
+
+Commit changes and push to main:
+git add .
+git commit -m "Update site"
+git push
+
+Check:
+GitHub → Actions → Deploy static site to S3
+
+📝 Example deploy.yml
+
+Full workflow included in:
+.github/workflows/deploy.yml
+
+
+It uses:
+
+aws-actions/configure-aws-credentials
+
+aws-actions/aws-cli@v2
+
+Clean s3 sync with file exclusions
+
+✔️ Validation / Testing Checklist
+
+Site loads via S3 website endpoint or CloudFront
+
+GitHub Actions workflow succeeds
+
+Objects appear in bucket
+
+If updates don’t show: invalidate CloudFront or wait for TTL
+
+🩺 Troubleshooting Guide
+
+❌ SignatureDoesNotMatch
+
+Region mismatch
+
+Wrong secret keys
+
+❌ Files like .git uploaded
+
+Add more --exclude rules
+
+❌ AccessDenied
+
+IAM policy missing s3:PutObject or s3:DeleteObject
+
+🔐 Security Notes
+
+Follow least privilege (policy provided above)
+
+Store AWS keys ONLY in GitHub Secrets
+
+Never commit credentials to the repo
+
+👤 Author
 
 Okeke Jehohanan (Ginika)
-Cloud / DevOps Engineer — learning practical cloud security and automation.
-Repo: https://github.com/ginikatheboy/Ginika-Static-Web
+Cloud / DevOps Engineer — learning practical cloud security & automation
 
-⸻
-
-License
-
-This project is released under the MIT License — see LICENSE (add if you want to include one).
-
-⸻
-
-Appendix — Useful commands
-
-# Sync local files to S3 (manual)
-aws s3 sync . s3://your-bucket --delete --exclude ".git/*" --exclude ".github/*"
-
-# Check caller identity (debug credentials)
-aws sts get-caller-identity
+🔗 Repo: https://github.com/ginikatheboy/Ginika-Static-Web
