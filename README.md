@@ -87,7 +87,7 @@ Replace `ginika-website` with your bucket name:
 ```
 
 ---
-##🔧 GitHub Actions — How It Works
+## 🔧 GitHub Actions — How It Works
 
 The deployment workflow triggers on pushes to main:
 
@@ -101,7 +101,8 @@ Run aws s3 sync to upload files
 
 This workflow ignores files like .git and .github to keep deployments clean.
 
-##🛠️ Setup Guide (Step-by-Step)
+## 🛠️ Setup Guide (Step-by-Step)
+
 - Create an S3 Bucket
 
 Name must be globally unique
@@ -131,7 +132,8 @@ git push
 Check:
 GitHub → Actions → Deploy static site to S3
 
-📝 Example deploy.yml
+---
+## 📝 Example deploy.yml
 
 Full workflow included in:
 .github/workflows/deploy.yml
@@ -145,6 +147,7 @@ aws-actions/aws-cli@v2
 
 Clean s3 sync with file exclusions
 
+
 ✔️ Validation / Testing Checklist
 
 Site loads via S3 website endpoint or CloudFront
@@ -153,9 +156,9 @@ GitHub Actions workflow succeeds
 
 Objects appear in bucket
 
-If updates don’t show: invalidate CloudFront or wait for TTL
+---
+## 🩺 Troubleshooting Guide
 
-🩺 Troubleshooting Guide
 
 ❌ SignatureDoesNotMatch
 
@@ -171,13 +174,15 @@ Add more --exclude rules
 
 IAM policy missing s3:PutObject or s3:DeleteObject
 
-🔐 Security Notes
+---
+## 🔐 Security Notes
 
 Follow least privilege (policy provided above)
 
 Store AWS keys ONLY in GitHub Secrets
 
 Never commit credentials to the repo
+---
 
 👤 Author
 
