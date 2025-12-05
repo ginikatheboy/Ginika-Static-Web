@@ -31,10 +31,11 @@ This project demonstrates:
 
 ## 📁 Repository Structure
 
+```tree
 .
 ├── .github/
-│ └── workflows/
-│ └── deploy.yml # CI/CD pipeline
+│   └── workflows/
+│       └── deploy.yml # CI/CD pipeline
 ├── index.html # Static website
 └── README.md # Documentation
 
