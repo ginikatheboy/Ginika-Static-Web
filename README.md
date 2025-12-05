@@ -84,9 +84,10 @@ Replace `ginika-website` with your bucket name:
     }
   ]
 }
+```
 
-
-🔧 GitHub Actions — How It Works
+---
+##🔧 GitHub Actions — How It Works
 
 The deployment workflow triggers on pushes to main:
 
@@ -100,29 +101,17 @@ Run aws s3 sync to upload files
 
 This workflow ignores files like .git and .github to keep deployments clean.
 
-🛠️ Setup Guide (Step-by-Step)
-1️⃣ Create an S3 Bucket
+##🛠️ Setup Guide (Step-by-Step)
+- Create an S3 Bucket
 
 Name must be globally unique
 
 For public website hosting: enable static hosting & public object reads
 
-For CloudFront: bucket can stay private
 
+Then visit your S3 website endpoint to confirm.
 
-aws s3 sync . s3://your-bucket \
-  --exclude ".git/" \
-  --exclude ".github/"
-
-Then visit your S3 website endpoint or CloudFront URL to confirm.
-
-3️⃣ Create CloudFront Distribution (Optional but recommended)
-
-Origin: your S3 bucket
-
-Viewer Protocol Policy: Redirect HTTP to HTTPS
-
-4️⃣ Add Repo Secrets
+- Add Repo Secrets
 
 GitHub → Repository → Settings → Secrets → Actions:
 
@@ -132,7 +121,7 @@ AWS_SECRET_ACCESS_KEY
 
 S3_BUCKET
 
-5️⃣ Push to Deploy
+- Push to Deploy
 
 Commit changes and push to main:
 git add .
